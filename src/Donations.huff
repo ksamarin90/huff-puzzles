@@ -7,6 +7,31 @@
 
 #define function donated(address) payable returns(uint256)
 
+#define macro DONATED() = takes(0) returns(0) {
+    0x04 calldataload
+    sload
+    0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro RECEIVE() = takes(0) returns(0) {
+    caller sload
+    callvalue
+    add
+    caller 
+    sstore
+}
+
 #define macro MAIN() = takes(0) returns(0) {
-    
+    0x00 calldataload 0xe0 shr
+
+    dup1 __FUNC_SIG(donated) eq donated jumpi
+    0x00 eq receive jumpi
+
+    0x00 0x00 revert
+
+    donated:
+        DONATED()
+    receive:
+        RECEIVE()
 }
