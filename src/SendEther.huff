@@ -10,7 +10,25 @@
 
  #define function sendEther(address) payable returns()
 
+ #define macro SEND_ETHER() = takes(0) returns(0) {
+    0x00 // retSize
+    0x00 // retOffset
+    0x00 // argsSize
+    0x00 // argsOffset
+    callvalue // value
+    0x04 calldataload // address
+    0x00 // gas
+    call
+ }
+
 
  #define macro MAIN() = takes(0) returns(0) {
-    
+    0x00 calldataload 0xe0 shr
+
+    dup1 __FUNC_SIG(sendEther) eq sendEther jumpi
+
+    0x00 0x00 revert
+
+    sendEther:
+        SEND_ETHER()
  }
